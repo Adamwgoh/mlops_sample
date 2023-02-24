@@ -1,5 +1,9 @@
 **/*.db
 **/*.out
-savedmodel/**
 **/*.pyc
 **/*.egg-info
+
+jupyter/**
+savedmodel/**
+Tensorboard/**
+Logs/**
