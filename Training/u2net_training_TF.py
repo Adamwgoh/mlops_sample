@@ -112,8 +112,9 @@ def run_training(
     else:
       logger.info("Found existing experiment in DB. Setting it as Active")
       exp_id = exp_found[0]
+      exp_id = exp_id.experiment_id
 
-    exp = mlflow.set_experiment(exp_id.experiment_id)
+    exp = mlflow.set_experiment(exp_id)
     logger.info(f"MLFLOW Tracking Uri: {mlflow_tracking_uri}")
     mlflow.set_tracking_uri(mlflow_tracking_uri)
     logger.info(f"Tracking logs are stored in: {mlflow.get_tracking_uri()}")
