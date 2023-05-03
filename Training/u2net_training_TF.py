@@ -8,18 +8,20 @@ import tensorflow as tf
 # only needed as sample, remove if you want to prod this
 import tensorflow_datasets as tfds 
 
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 from common.general_util import get_logger
 from Model.u2net_mobilenetv2_tf import U2NET_MobileNetV2_TF
 from Datasets.Common.Tensorflow.augment import Augment, normalize
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 def load_sample_dataset(
                         buffer_size:int,
                         batch_size:int
     ):
 
+    #TODO: take dataset out, but use this for nowa s we want to connect this to spark or a stream like kafka
     dataset, info = tfds.load('oxford_iiit_pet:3.*.*', with_info=True)
+    #dataset, info = tfds.load('minst:3.*.*', with_info=True)
     train_images = dataset['train'].map(load_image, num_parallel_calls=tf.data.AUTOTUNE)
     test_images = dataset['test'].map(load_image, num_parallel_calls=tf.data.AUTOTUNE)
 
@@ -95,9 +97,11 @@ def run_training(
       mlflow_runname:str="u2net_tf_training",
       mlflow_experimentname:str="oxford_iiit_pet_sample",
       # mlflow_tracking_uri:str="sqlite:///db/mlruns.db",
-      mlflow_tracking_uri:str="http://0.0.0.0:5000",
+      mlflow_tracking_uri:str="http://50.1.1.4:5000",
       logger=get_logger()
 ):
+    logger.info(f"MLFLOW Tracking Uri: {mlflow_tracking_uri}")
+    mlflow.set_tracking_uri(mlflow_tracking_uri)
     #tracking_uri = "file://" + str(Path(tensorboard_logdir).absolute())
     #os.environ['MLFLOW_DEFAULT_ARTIFACT_ROOT'] = 'File://./savedmodel'
     #os.environ['MLFLOW_DEFAULT_ARTIFACT_ROOT'] = 'http://localhost:5000'
@@ -118,8 +122,6 @@ def run_training(
       exp_id = exp_id.experiment_id
 
     exp = mlflow.set_experiment(exp_id)
-    logger.info(f"MLFLOW Tracking Uri: {mlflow_tracking_uri}")
-    mlflow.set_tracking_uri(mlflow_tracking_uri)
     logger.warning(f"Tracking logs are stored in: {mlflow.get_tracking_uri()}")
     logger.warning(f"Artifacts URI are stored in: {mlflow.get_artifact_uri()}")
     logger.warning(f"Registred Model URI are stored in: {mlflow.get_registry_uri()}")
