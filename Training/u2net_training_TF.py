@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 from pathlib import Path
 
@@ -11,6 +12,7 @@ from common.general_util import get_logger
 from Model.u2net_mobilenetv2_tf import U2NET_MobileNetV2_TF
 from Datasets.Common.Tensorflow.augment import Augment, normalize
 
+sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 def load_sample_dataset(
                         buffer_size:int,
@@ -109,17 +111,18 @@ def run_training(
                           artifact_location=mlflow.get_artifact_uri(),
                           tags={"version": "Sample", "priority": "sample"},
                       )
+      logger.info(f"created a new experiment with id: {exp_id.experiment_id}")
     else:
-      logger.info("Found existing experiment in DB. Setting it as Active")
+      logger.info(f"Found existing experiment {exp_found[0]} in DB. Setting it as Active")
       exp_id = exp_found[0]
       exp_id = exp_id.experiment_id
 
     exp = mlflow.set_experiment(exp_id)
     logger.info(f"MLFLOW Tracking Uri: {mlflow_tracking_uri}")
     mlflow.set_tracking_uri(mlflow_tracking_uri)
-    logger.info(f"Tracking logs are stored in: {mlflow.get_tracking_uri()}")
+    logger.warning(f"Tracking logs are stored in: {mlflow.get_tracking_uri()}")
     logger.warning(f"Artifacts URI are stored in: {mlflow.get_artifact_uri()}")
-    logger.info(f"Registred Model URI are stored in: {mlflow.get_registry_uri()}")
+    logger.warning(f"Registred Model URI are stored in: {mlflow.get_registry_uri()}")
     
     
     model = U2NET_MobileNetV2_TF()

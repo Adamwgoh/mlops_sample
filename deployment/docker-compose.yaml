@@ -1,0 +1,14 @@
+version: '0.1'
+
+services:
+  mlflow:
+    image: 'mlflow_server:latest'
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - "./data:/mlflow"
+    environment:
+      BACKEND_URI: sqlite:////db/mlruns.db
+      ARTIFACT_ROOT: ${PWD}/savedmodel
+      REGISTERED_STORE_URI: sqlite:///db/regustered_model.db
