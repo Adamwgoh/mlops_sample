@@ -27,6 +27,9 @@ This is a sample implementation of MLFlow on a tensorflow training workflow, whe
 * Adding model serving via REST API
 * Adding CI and test cases
 
+## 3 May 2023 Update
+* Dockerized mlflow server and training sequence. To run them, now run `docker compose -f deployment/docker-compose.yaml up -d'
+* mlflow server will use 51.0.0.4:5000 as its internal IP and port.
 
 ## 26 April 2023 Update
 * Terraform is now supported for kubernetes deployment. Make sure you have terraform installed [see how here](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
