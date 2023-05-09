@@ -33,3 +33,13 @@ This is a sample implementation of MLFlow on a tensorflow training workflow, whe
 
 ## 26 April 2023 Update
 * Terraform is now supported for kubernetes deployment. Make sure you have terraform installed [see how here](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+
+## 9 May 2023 Update
+* Support for kubernetes complete. Tested with minikube.
+* Make sure you build the docker images into minikube's docker daemon
+* Make sure the docker image names are the same as listed in `training-development.yaml` and `mlflow-development.yaml`
+* Apply for mlflow-development.yaml for pod
+* Apply for mlflow-service to fix internal IP
+* port-forward with kubectl, then run localhost:5000 to ensure mlflow is running
+* Apply for `training-development.yaml`
+* Give it a while to downloade necessary dataset. After ~10minutes, see logs to check training, and a new experiment should be made available in the localhost:5000
