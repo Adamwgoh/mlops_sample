@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: mlflow
+  name: mlflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: mlflow
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/deployment-mlnet: "true"
+        io.kompose.service: mlflow
+    spec:
+      containers:
+        - env:
+            - name: ARTIFACT_ROOT
+              value: ./deployment/savedmodel
+            - name: BACKEND_URI
+              value: db/mlruns.db
+            - name: REGISTERED_STORE_URI
+              value: db/registered_model.db
+          name: mlflow
+          image: mlflow_server:latest
+          imagePullPolicy: Never
+          # restartPolicy: Never
+          ports:
+            - containerPort: 5000
+          resources: {}
+          volumeMounts:
+            - mountPath: /mlflow/savedmodel
+              name: mlflow-claim0
+            - mountPath: ../../db/mlruns.db
+              name: mlflow-claim1
+            - mountPath: ../../db/registered_model.db
+              name: mlflow-claim2
+      #restartPolicy: Always
+      volumes:
+        - name: mlflow-claim0
+          persistentVolumeClaim:
+            claimName: mlflow-claim0
+        - name: mlflow-claim1
+          persistentVolumeClaim:
+            claimName: mlflow-claim1
+        - name: mlflow-claim2
+          persistentVolumeClaim:
+            claimName: mlflow-claim2
+status: {}
